@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import java.util.*;
 
+//class for the user view window
 public class UserView {
     private VBox userView;
     
@@ -25,11 +26,15 @@ public class UserView {
         Button follow = new Button();
         follow.setText("Follow");
         
+        Label update = new Label();
+        
+        Label creation = new Label();
+        creation.setText("Creation time: " + newUser.getCreationTime());
+        
         TextField tweetText = new TextField();
         TextField followText = new TextField();
         ListView displayFollowing = new ListView();
         
-        System.out.println("new user: " + newUser.getName());
         if(newUser.getFollowing() != null){
             for(int i = 0; i < newUser.getFollowing().size(); i++){
                 displayFollowing.getItems().add(newUser.getFollowing().get(i).getName());
@@ -46,31 +51,28 @@ public class UserView {
                     tempUser = userList.get(i);
                 }
             }
-            System.out.print("temp user: " + tempUser.getName());
             newUser.addFollowing(tempUser);
             tempUser.attach(newUser);
             displayFollowing.getItems().add(tempUser.getName());
         });
-        
-        /*
-        if(newUser.getNewsFeed() != null){
-            for(int i = 0; i < newUser.getNewsFeed().size(); i++){
-                displayTweet.getItems().add(newUser.getNewsFeed().get(i));
-            }
-        }
-        */
         
         tweet.setOnAction(actionEvent -> {
             String message;
             message = tweetText.getText();
             tweetText.clear();
             newUser.post(message);
+            newUser.time();
         });
         ListView displayTweet = new ListView(newUser.getNewsFeed());
         
+        //the update time must be refreshed (close user view and open again)
+        update.setText("Last update: " + newUser.getUpdatedTime() + " milliseconds ago");
+        
+        HBox creationTime = new HBox(creation);
         HBox followSet = new HBox(follow, followText);
         HBox tweetSet = new HBox(tweet, tweetText);
-        VBox vbox = new VBox(followSet, displayFollowing, tweetSet, displayTweet);
+        HBox findTime = new HBox(update);
+        VBox vbox = new VBox(creationTime, followSet, displayFollowing, tweetSet, displayTweet, findTime);
         userView = vbox;
     }
     
@@ -85,7 +87,7 @@ public class UserView {
         UserView viewUser = new UserView(user, userList);
         
         Stage newWindow = new Stage();
-        newWindow.setTitle("User View");
+        newWindow.setTitle(newUser.getName() + "'s User View");
         VBox vbox = viewUser.getBox();
         Scene secondScene = new Scene(vbox, 300, 250);
         newWindow.setScene(secondScene);

@@ -11,7 +11,14 @@ public abstract class Subject {
     
     public void notifyObserver(String message){
         for(Observer observer: this.observers){
-            observer.update(this, message); //this refers to the suject
+            observer.updateTweets(this, message); //this refers to the suject
+        }
+    }
+    
+    public void notifyTimeChange(long time){
+        //notify each follower of the last updated time
+        for(Observer observer: this.observers){
+            observer.updateTime(this, time);
         }
     }
 }
